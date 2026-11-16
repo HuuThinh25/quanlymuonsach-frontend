@@ -1,27 +1,30 @@
 import { createWebHistory, createRouter } from "vue-router";
-import ContactBook from "@/views/ContactBook.vue";
 
 const routes = [
     {
         path: "/",
-        name: "contactbook",
-        component: ContactBook,
+        redirect: { name: "nhaxuatban.list" },
     },
     {
-    path: "/contacts/add",
-    name: "contact.add",
-    component: () => import("@/views/ContactAdd.vue"),
+        path: "/nhaxuatban",
+        name: "nhaxuatban.list",
+        component: () => import("@/views/NhaXuatBanList.vue"),
     },
     {
-    path: "/:pathMatch(.*)*",
-    name: "notfound",
-    component: () => import("@/views/NotFound.vue"),
+        path: "/nhaxuatban/add",
+        name: "nhaxuatban.add",
+        component: () => import("@/views/NhaXuatBanAdd.vue"),
     },
     {
-        path: "/contact/:id",
-        name: "contact.edit",
-        component: () => import("@/views/ContactEdit.vue"),
-        props: true // Truyền các biến trong $router.paramss vào làm props
+        path: "/nhaxuatban/:id",
+        name: "nhaxuatban.edit",
+        component: () => import("@/views/NhaXuatBanEdit.vue"),
+        props: true,
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "notfound",
+        component: () => import("@/views/NotFound.vue"),
     },
 ];
 
