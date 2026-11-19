@@ -1,79 +1,41 @@
-<template>
-  <Form @submit="submitNxb" :validation-schema="schema">
-    <div class="form-group">
-      <label for="MaNXB">Mã NXB</label>
-      <Field
-        id="MaNXB"
-        name="MaNXB"
-        type="text"
-        class="form-control"
-        :disabled="!!nxbLocal._id"
-        v-model="nxbLocal.MaNXB"
-      />
-      <ErrorMessage name="MaNXB" class="error-feedback" />
-    </div>
-    <div class="form-group">
-      <label for="TenNXB">Tên nhà xuất bản</label>
-      <Field
-        id="TenNXB"
-        name="TenNXB"
-        type="text"
-        class="form-control"
-        v-model="nxbLocal.TenNXB"
-      />
-      <ErrorMessage name="TenNXB" class="error-feedback" />
-    </div>
-    <div class="form-group">
-      <label for="DiaChi">Địa chỉ</label>
-      <Field
-        id="DiaChi"
-        name="DiaChi"
-        type="text"
-        class="form-control"
-        v-model="nxbLocal.DiaChi"
-      />
-      <ErrorMessage name="DiaChi" class="error-feedback" />
-    </div>
-
-    <div class="form-group">
-      <button class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
-      <button type="button" class="ml-2 btn btn-secondary" @click="cancel">
-        Thoát
-      </button>
-    </div>
-  </Form>
-</template>
-
 <script>
 import * as yup from "yup";
-import { Form, Field, ErrorMessage } from "vee-validate";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+
+const schema = yup.object().shape({
+  MaNXB: yup.string().required("Mã NXB phải có giá trị.").max(20, "Mã NXB tối đa 20 ký tự."),
+  TenNXB: yup.string().required("Tên NXB phải có giá trị.").max(100, "Tên NXB tối đa 100 ký tự."),
+  DiaChi: yup.string().max(200, "Địa chỉ tối đa 200 ký tự."),
+});
 
 export default {
-  components: { Form, Field, ErrorMessage },
+  components: { InputText, Button },
   emits: ["submit:nxb"],
   props: {
     nxb: { type: Object, required: true },
   },
   data() {
-    const schema = yup.object().shape({
-      MaNXB: yup
-        .string()
-        .required("Mã NXB phải có giá trị.")
-        .max(20, "Mã NXB tối đa 20 ký tự."),
-      TenNXB: yup
-        .string()
-        .required("Tên NXB phải có giá trị.")
-        .max(100, "Tên NXB tối đa 100 ký tự."),
-      DiaChi: yup.string().max(200, "Địa chỉ tối đa 200 ký tự."),
-    });
     return {
-      // Bản sao cục bộ để không sửa trực tiếp props
       nxbLocal: { ...this.nxb },
-      schema,
+      errors: {},
     };
   },
   methods: {
-    submitNxb() {
+    async validateAndSubmit() {
+      this.errors = {};
+      try {
+        await schema.validate(this.nxbLocal, { abortEarly: false });
+      } catch (err) {
+        if (err.inner) {
+          err.inner.forEach((e) => {
+            if (e.path && !this.errors[e.path]) {
+              this.errors[e.path] = e.message;
+            }
+          });
+        }
+        return;
+      }
       this.$emit("submit:nxb", this.nxbLocal);
     },
     cancel() {
@@ -83,6 +45,62 @@ export default {
 };
 </script>
 
+<template>
+  <form @submit.prevent="validateAndSubmit" class="nxb-form">
+    <div class="form-field">
+      <label for="MaNXB">Mã NXB</label>
+      <InputText
+        id="MaNXB"
+        v-model="nxbLocal.MaNXB"
+        :disabled="!!nxbLocal._id"
+        class="w-full"
+      />
+      <small v-if="errors.MaNXB" class="error-text">{{ errors.MaNXB }}</small>
+    </div>
+
+    <div class="form-field">
+      <label for="TenNXB">Tên nhà xuất bản</label>
+      <InputText id="TenNXB" v-model="nxbLocal.TenNXB" class="w-full" />
+      <small v-if="errors.TenNXB" class="error-text">{{ errors.TenNXB }}</small>
+    </div>
+
+    <div class="form-field">
+      <label for="DiaChi">Địa chỉ</label>
+      <InputText id="DiaChi" v-model="nxbLocal.DiaChi" class="w-full" />
+      <small v-if="errors.DiaChi" class="error-text">{{ errors.DiaChi }}</small>
+    </div>
+
+    <div class="form-actions">
+      <Button type="submit" label="Lưu" icon="pi pi-check" />
+      <Button type="button" label="Thoát" icon="pi pi-times" severity="secondary" @click="cancel" />
+    </div>
+  </form>
+</template>
+
 <style scoped>
-@import "@/assets/form.css";
+.nxb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.form-field label {
+  font-weight: 600;
+}
+.error-text {
+  color: #d32f2f;
+  font-size: 0.8rem;
+}
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.w-full {
+  width: 100%;
+}
 </style>

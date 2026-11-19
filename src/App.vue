@@ -1,26 +1,25 @@
 <script>
-import AppHeader from "@/components/AppHeader.vue";
+import Toast from "primevue/toast";
+import ConfirmDialog from "primevue/confirmdialog";
 
 export default {
   components: {
-    AppHeader,
+    Toast,
+    ConfirmDialog,
   },
 };
 </script>
 
 <template>
-  <div id="app">
-    <AppHeader />
-
-    <div class="container mt-3">
-      <router-view />
-    </div>
-  </div>
+  <Toast />
+  <ConfirmDialog />
+  <router-view />
 </template>
 
 <style>
-.page {
-  max-width: 400px;
-  margin: auto;
+.page-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
 }
 </style>

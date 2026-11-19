@@ -1,25 +1,21 @@
-<template>
-  <div v-if="nxb" class="page">
-    <h4>Hiệu chỉnh nhà xuất bản</h4>
-    <NhaXuatBanForm :nxb="nxb" @submit:nxb="updateNxb" />
-    <p class="text-danger">{{ message }}</p>
-  </div>
-</template>
-
 <script>
+import Card from "primevue/card";
 import NhaXuatBanForm from "@/components/NhaXuatBanForm.vue";
 import NhaXuatBanService from "@/services/nhaxuatban.service";
+import { useToast } from "primevue/usetoast";
 
 export default {
-  components: { NhaXuatBanForm },
+  components: { Card, NhaXuatBanForm },
   props: {
     id: { type: String, required: true },
   },
   data() {
     return {
       nxb: null,
-      message: "",
     };
+  },
+  setup() {
+    return { toast: useToast() };
   },
   methods: {
     async getNxb(id) {
@@ -27,7 +23,6 @@ export default {
         this.nxb = await NhaXuatBanService.get(id);
       } catch (error) {
         console.log(error);
-        // Chuyển sang trang NotFound nhưng giữ nguyên URL
         this.$router.push({
           name: "notfound",
           params: {
@@ -41,12 +36,21 @@ export default {
     async updateNxb(data) {
       try {
         await NhaXuatBanService.update(this.nxb._id, data);
-        alert("Cập nhật nhà xuất bản thành công.");
+        this.toast.add({
+          severity: "success",
+          summary: "Thành công",
+          detail: "Cập nhật nhà xuất bản thành công.",
+          life: 3000,
+        });
         this.$router.push({ name: "nhaxuatban.list" });
       } catch (error) {
         console.log(error);
-        this.message =
-          error.response?.data?.message || "Không thể cập nhật nhà xuất bản.";
+        this.toast.add({
+          severity: "error",
+          summary: "Lỗi",
+          detail: error.response?.data?.message || "Không thể cập nhật nhà xuất bản.",
+          life: 3000,
+        });
       }
     },
   },
@@ -55,3 +59,14 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="page-container" v-if="nxb">
+    <Card>
+      <template #title>Hiệu chỉnh nhà xuất bản</template>
+      <template #content>
+        <NhaXuatBanForm :nxb="nxb" @submit:nxb="updateNxb" />
+      </template>
+    </Card>
+  </div>
+</template>
