@@ -1,49 +1,49 @@
 <script>
-import Menubar from "primevue/menubar";
-import Button from "primevue/button";
+import { useRouter } from "vue-router";
 import authService from "@/services/auth.service";
 
 export default {
-  components: {
-    Menubar,
-    Button,
-  },
-  data() {
-    return {
-      items: [
-        { label: "Sách", command: () => this.$router.push("/") },
-        { label: "Lịch sử mượn", disabled: true },
-        { label: "Hồ sơ", disabled: true },
-      ],
-    };
+  setup() {
+    const router = useRouter();
+    function logout() {
+      authService.logout();
+      router.push("/login");
+    }
+    return { logout, authService };
   },
   computed: {
-    user() {
-      return authService.getUser();
-    },
-  },
-  methods: {
-    logout() {
-      authService.logout();
-      this.$router.push("/login");
-    },
+    user() { return authService.getUser(); },
+    loggedIn() { return authService.isLoggedIn(); },
   },
 };
 </script>
 
 <template>
-  <div class="reader-layout">
-    <Menubar :model="items">
-      <template #start>
-        <span class="text-lg font-bold">Quản lý mượn sách</span>
-      </template>
-      <template #end>
-        <span class="mr-2">{{ user?.HoLot }} {{ user?.Ten }}</span>
-        <Button label="Đăng xuất" icon="pi pi-sign-out" @click="logout" size="small" />
-      </template>
-    </Menubar>
-    <div class="page-container">
+  <div>
+    <header class="reader-header">
+      <router-link to="/">Danh mục sách</router-link>
+      <nav>
+        <template v-if="loggedIn">
+          <router-link to="/lich-su-muon">Lịch sử mượn</router-link>
+          <router-link to="/ho-so">Hồ sơ</router-link>
+          <span>{{ user?.HoTenDG || user?.HoTenNV }}</span>
+          <a href="#" @click.prevent="logout">Đăng xuất</a>
+        </template>
+        <template v-else>
+          <router-link to="/login">Đăng nhập</router-link>
+          <router-link to="/dang-ky">Đăng ký</router-link>
+        </template>
+      </nav>
+    </header>
+    <main class="content">
       <router-view />
-    </div>
+    </main>
   </div>
 </template>
+
+<style scoped>
+.reader-header { display: flex; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid #e0e0e0; }
+.content { padding: 1.5rem; }
+nav { display: flex; gap: 1rem; align-items: center; }
+nav a { text-decoration: none; color: #333; }
+</style>

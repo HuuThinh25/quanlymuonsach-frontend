@@ -9,14 +9,43 @@ const routes = [
         meta: { guest: true },
     },
     {
+        path: "/dang-ky",
+        name: "register",
+        component: () => import("@/views/RegisterView.vue"),
+        meta: { guest: true },
+    },
+    {
+        path: "/quen-mat-khau",
+        name: "forgot",
+        component: () => import("@/views/QuenMatKhauView.vue"),
+        meta: { guest: true },
+    },
+    {
+        path: "/dat-lai-mat-khau",
+        name: "reset",
+        component: () => import("@/views/DatLaiMatKhauView.vue"),
+        meta: { guest: true },
+    },
+    {
         path: "/",
         component: () => import("@/layouts/ReaderLayout.vue"),
-        meta: { requiresAuth: true, role: "docgia" },
         children: [
             {
                 path: "",
                 name: "reader.home",
                 component: () => import("@/views/ReaderHome.vue"),
+            },
+            {
+                path: "lich-su-muon",
+                name: "reader.history",
+                component: () => import("@/views/LichSuMuon.vue"),
+                meta: { requiresAuth: true, role: "docgia" },
+            },
+            {
+                path: "ho-so",
+                name: "reader.profile",
+                component: () => import("@/views/ReaderProfile.vue"),
+                meta: { requiresAuth: true, role: "docgia" },
             },
         ],
     },
@@ -28,7 +57,12 @@ const routes = [
             {
                 path: "",
                 name: "admin.home",
-                component: () => import("@/views/AdminHome.vue"),
+                component: () => import("@/views/AdminDashboard.vue"),
+            },
+            {
+                path: "muonsach",
+                name: "muonsach.list",
+                component: () => import("@/views/MuonSachList.vue"),
             },
             {
                 path: "nhaxuatban",
@@ -46,6 +80,51 @@ const routes = [
                 component: () => import("@/views/NhaXuatBanEdit.vue"),
                 props: true,
             },
+            {
+                path: "sach",
+                name: "sach.list",
+                component: () => import("@/views/SachList.vue"),
+            },
+            {
+                path: "sach/add",
+                name: "sach.add",
+                component: () => import("@/views/SachAdd.vue"),
+            },
+            {
+                path: "sach/:id",
+                name: "sach.edit",
+                component: () => import("@/views/SachEdit.vue"),
+                props: true,
+            },
+            {
+                path: "docgia",
+                name: "docgia.list",
+                component: () => import("@/views/DocGiaList.vue"),
+            },
+            {
+                path: "nhanvien",
+                name: "nhanvien.list",
+                component: () => import("@/views/NhanVienList.vue"),
+                meta: { chucVu: "QuanLy" },
+            },
+            {
+                path: "nhanvien/add",
+                name: "nhanvien.add",
+                component: () => import("@/views/NhanVienAdd.vue"),
+                meta: { chucVu: "QuanLy" },
+            },
+            {
+                path: "nhanvien/:id",
+                name: "nhanvien.edit",
+                component: () => import("@/views/NhanVienEdit.vue"),
+                props: true,
+                meta: { chucVu: "QuanLy" },
+            },
+            {
+                path: "ho-so",
+                name: "admin.profile",
+                component: () => import("@/views/AdminProfile.vue"),
+            },
         ],
     },
     {
@@ -60,45 +139,48 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
     const loggedIn = authService.isLoggedIn();
     const role = authService.getRole();
     const validRoles = ["nhanvien", "docgia"];
 
-    // Trang cần đăng nhập mà chưa có session
-    if (to.meta.requiresAuth && !loggedIn) {
-        return next("/login");
+    // Guest pages accessible when not logged in
+    const guestPaths = ["/login", "/dang-ky", "/quen-mat-khau", "/dat-lai-mat-khau"];
+    if (guestPaths.includes(to.path) && !loggedIn) {
+        return;
     }
 
-    // Vai trò thiếu hoặc không hợp lệ → xóa session, chuyển /login nếu cần đăng nhập
+    // Already logged in visiting login/register → redirect to home by role
+    if (loggedIn && (to.path === "/login" || to.path === "/dang-ky")) {
+        return authService.homeOf(role);
+    }
+
+    // Requires auth
+    if (to.meta.requiresAuth && !loggedIn) {
+        return "/login";
+    }
+
+    // Invalid role
     if (loggedIn && !validRoles.includes(role)) {
         authService.logout();
-        if (to.meta.requiresAuth) {
-            return next("/login");
-        }
-        return next();
+        if (to.meta.requiresAuth) return "/login";
+        return;
     }
 
-    // Đã đăng nhập mà vào /login → chuyển trang chủ theo vai trò
-    if (to.meta.guest && loggedIn) {
-        const target = authService.homeOf(role);
-        if (to.path !== target) {
-            return next(target);
-        }
-        return next();
-    }
-
-    // Có meta.role mà vai trò không khớp → chuyển trang chủ của vai trò đó
-    // (nếu trang chủ đó chính là trang đang đến thì không chuyển nữa)
+    // Role mismatch
     if (to.meta.requiresAuth && to.meta.role && role !== to.meta.role) {
-        const target = authService.homeOf(role);
-        if (to.path !== target) {
-            return next(target);
-        }
-        return next();
+        return authService.homeOf(role);
     }
 
-    return next();
+    // chucVu guard for nhanvien
+    if (to.meta.chucVu) {
+        const user = authService.getUser();
+        if (user?.ChucVu !== to.meta.chucVu) {
+            return "/admin";
+        }
+    }
+
+    return;
 });
 
 export default router;

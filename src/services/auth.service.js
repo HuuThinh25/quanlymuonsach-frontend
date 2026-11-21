@@ -11,6 +11,18 @@ export default {
         localStorage.setItem("user", JSON.stringify(userWithRole));
         return { token, user: userWithRole };
     },
+    async dangKy(data) {
+        const response = await api("/api").post("/auth/dang-ky", data);
+        return response.data;
+    },
+    async quenMatKhau(role, email) {
+        const response = await api("/api").post("/auth/quen-mat-khau", { role, email });
+        return response.data;
+    },
+    async datLaiMatKhau(token, matKhauMoi) {
+        const response = await api("/api").post("/auth/dat-lai-mat-khau", { token, matKhauMoi });
+        return response.data;
+    },
     logout() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
