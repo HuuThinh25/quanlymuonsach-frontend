@@ -37,31 +37,30 @@ export default {
         this.loading = false;
       }
     },
-    handleKeydown(e) {
-      if (e.key === "Enter") this.submit();
-    },
   },
 };
 </script>
 
 <template>
-  <div class="login-wrapper">
-    <div class="login-card">
-      <h1 class="login-title">Quản lý mượn sách</h1>
-      <SelectButton v-model="role" :options="roleOptions" optionLabel="label" optionValue="value" class="mb-3" />
-      <form @submit.prevent="submit" @keydown="handleKeydown">
-        <div class="mb-3">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo"><i class="pi pi-book"></i></div>
+      <h1 class="auth-title">Quản lý mượn sách</h1>
+      <p class="auth-sub">Đăng nhập để tiếp tục</p>
+      <SelectButton v-model="role" :options="roleOptions" optionLabel="label" optionValue="value" class="mb-3 w-full" />
+      <form @submit.prevent="submit">
+        <div class="field">
           <label class="form-label">Mã</label>
           <InputText v-model="ma" class="w-full" />
         </div>
-        <div class="mb-3">
+        <div class="field">
           <label class="form-label">Mật khẩu</label>
           <Password v-model="password" :feedback="false" toggleMask class="w-full" />
         </div>
-        <Button type="submit" label="Đăng nhập" :loading="loading" class="w-full" />
-        <p v-if="error" class="error-msg">{{ error }}</p>
+        <small v-if="error" class="err">{{ error }}</small>
+        <Button type="submit" label="Đăng nhập" :loading="loading" class="w-full mt-2" />
       </form>
-      <div class="login-links">
+      <div class="auth-links">
         <router-link v-if="role === 'docgia'" to="/dang-ky">Chưa có tài khoản? Đăng ký</router-link>
         <router-link to="/quen-mat-khau">Quên mật khẩu?</router-link>
       </div>
@@ -70,10 +69,12 @@ export default {
 </template>
 
 <style scoped>
-.login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-.login-card { width: 380px; padding: 2rem; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.login-title { text-align: center; margin-bottom: 1.5rem; font-size: 1.5rem; }
-.error-msg { color: #d32f2f; margin-top: 1rem; text-align: center; }
-.login-links { display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.9rem; }
-.w-full { width: 100%; }
+.auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.auth-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 2rem; width: 100%; max-width: 420px; }
+.auth-logo { text-align: center; font-size: 2rem; color: #42b883; margin-bottom: .5rem; }
+.auth-title { text-align: center; margin: 0 0 .25rem; font-size: 1.4rem; }
+.auth-sub { text-align: center; color: #6b7280; margin: 0 0 1.25rem; }
+.auth-links { display: flex; justify-content: space-between; margin-top: 1rem; font-size: .9rem; }
+.err { color: #d32f2f; display: block; margin-bottom: .5rem; }
+.mt-2 { margin-top: .5rem; }
 </style>

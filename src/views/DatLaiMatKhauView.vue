@@ -53,7 +53,7 @@ export default {
           <Password v-model="password" :feedback="false" toggleMask class="w-full" />
         </div>
         <div class="mb-3">
-          <label class="form-label">Nhập lại</label>
+          <label class="form-label">Nhập lại mật khẩu mới</label>
           <Password v-model="confirmPassword" :feedback="false" toggleMask class="w-full" />
         </div>
         <Button type="submit" label="Đặt lại" :loading="loading" class="w-full" />

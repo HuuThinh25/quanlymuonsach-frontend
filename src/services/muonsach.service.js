@@ -28,3 +28,4 @@ class MuonSachService {
 }
 
 export default new MuonSachService();
+

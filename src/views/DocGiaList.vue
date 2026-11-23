@@ -132,7 +132,11 @@ export default {
           {{ slotProps.data.HoLot }} {{ slotProps.data.Ten }}
         </template>
       </Column>
-      <Column field="Phai" header="Giới tính" />
+      <Column field="Phai" header="Giới tính">
+        <template #body="slotProps">
+          {{ slotProps.data.Phai === "Nu" ? "Nữ" : slotProps.data.Phai }}
+        </template>
+      </Column>
       <Column header="Ngày sinh">
         <template #body="slotProps">
           {{ formatDate(slotProps.data.NgaySinh) }}

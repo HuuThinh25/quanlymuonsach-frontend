@@ -23,6 +23,10 @@ export default {
         const response = await api("/api").post("/auth/dat-lai-mat-khau", { token, matKhauMoi });
         return response.data;
     },
+    async doiMatKhau(matKhauCu, matKhauMoi) {
+        const response = await api("/api").put("/auth/doi-mat-khau", { matKhauCu, matKhauMoi });
+        return response.data;
+    },
     logout() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");

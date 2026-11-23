@@ -23,7 +23,13 @@ export default {
       this.loading = true;
       try {
         const res = await api("/api").get("/thongke/tong-quan");
-        this.stats = res.data.stats || this.stats;
+        this.stats = {
+          choDuyet: res.data.choDuyet || 0,
+          dangMuon: res.data.dangMuon || 0,
+          quaHan: res.data.quaHan || 0,
+          docGiaBiCam: res.data.docGiaBiCam || 0,
+          sachSapHet: res.data.sachSapHet || 0,
+        };
         this.list = res.data.choDuyetMoiNhat || [];
       } catch (e) {
         this.toast.add({ severity: "error", summary: "Lỗi", detail: e.response?.data?.message || "Lỗi", life: 3000 });
@@ -78,5 +84,8 @@ export default {
 
 <style scoped>
 .cards { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.stat { cursor:pointer ; min-width: 150px;}
+.stat { cursor: pointer; min-width: 160px; flex: 1; transition: transform .15s, box-shadow .15s; }
+.stat:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.warn-val { color: #d97706; }
+.danger-val { color: #dc2626; }
 </style>
