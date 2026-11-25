@@ -2,11 +2,12 @@
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
 import Button from "primevue/button";
+import Select from "primevue/select";
 import { useToast } from "primevue/usetoast";
 import authService from "@/services/auth.service";
 
 export default {
-  components: { InputText, Password, Button },
+  components: { InputText, Password, Button, Select },
   setup() { return { toast: useToast() }; },
   data() {
     return {
@@ -14,6 +15,8 @@ export default {
       email: "",
       password: "",
       confirmPassword: "",
+      phai: "",
+      dienThoai: "",
       errors: {},
       loading: false,
       resultMa: null,
@@ -33,8 +36,11 @@ export default {
       if (!this.validate()) return;
       this.loading = true;
       try {
-        const res = await authService.dangKy({ hoTen: this.hoTen, email: this.email, password: this.password });
-        this.resultMa = res.maDocGia;
+        const parts = this.hoTen.trim().split(/\s+/);
+        const Ten = parts.pop();
+        const HoLot = parts.join(" ");
+        const res = await authService.dangKy({ HoLot, Ten, Email: this.email, Password: this.password, Phai: this.phai, DienThoai: this.dienThoai });
+        this.resultMa = res.MaDocGia;
       } catch (e) {
         this.toast.add({ severity: "error", summary: "Lỗi", detail: e.response?.data?.message || "Đăng ký thất bại", life: 3000 });
       } finally {
@@ -61,9 +67,17 @@ export default {
           <small class="err">{{ errors.hoTen }}</small>
         </div>
         <div class="mb-3">
+          <label class="form-label">Giới tính</label>
+          <Select v-model="phai" :options="[{label:'Nam',value:'Nam'},{label:'Nữ',value:'Nu'}]" optionLabel="label" optionValue="value" class="w-full" />
+        </div>
+        <div class="mb-3">
           <label class="form-label">Email</label>
           <InputText v-model="email" class="w-full" />
           <small class="err">{{ errors.email }}</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Số điện thoại</label>
+          <InputText v-model="dienThoai" class="w-full" />
         </div>
         <div class="mb-3">
           <label class="form-label">Mật khẩu</label>
