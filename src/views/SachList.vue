@@ -172,7 +172,7 @@ export default {
         <template #body="slotProps">
           <Button
             icon="pi pi-pencil"
-            class="p-button-warning p-button-sm mr-1"
+            class="p-button-warn p-button-sm mr-1"
             @click="$router.push({ name: 'sach.edit', params: { id: slotProps.data._id } })"
           />
           <Button
@@ -190,3 +190,4 @@ export default {
 .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: .75rem; }
 .list-actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
 </style>
+

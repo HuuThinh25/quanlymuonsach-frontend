@@ -59,3 +59,4 @@ export default {
 .login-title { text-align: center; margin-bottom: 1.5rem; font-size: 1.5rem; }
 .w-full { width: 100%; }
 </style>
+

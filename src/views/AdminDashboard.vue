@@ -89,3 +89,4 @@ export default {
 .warn-val { color: #d97706; }
 .danger-val { color: #dc2626; }
 </style>
+

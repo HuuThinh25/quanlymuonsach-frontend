@@ -100,7 +100,7 @@ export default {
         <template #body="slotProps">
           <Button
             icon="pi pi-pencil"
-            class="p-button-warning p-button-sm mr-1"
+            class="p-button-warn p-button-sm mr-1"
             @click="$router.push({ name: 'nhanvien.edit', params: { id: slotProps.data._id } })"
           />
           <Button
@@ -131,3 +131,4 @@ export default {
   flex-wrap: wrap;
 }
 </style>
+

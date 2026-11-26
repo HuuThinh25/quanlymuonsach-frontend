@@ -87,7 +87,7 @@ export default {
 
     <div class="form-field">
       <label for="ChucVu">Chức vụ</label>
-      <Select id="ChucVu" v-model="nhanvienLocal.ChucVu" :options="[{label:'QuanLy',value:'QuanLy'},{label:'NhanVien',value:'NhanVien'}]" optionLabel="label" optionValue="value" class="w-full" />
+      <Select id="ChucVu" v-model="nhanvienLocal.ChucVu" :options="[{label:'Quản lý',value:'QuanLy'},{label:'Thủ thư',value:'NhanVien'}]" optionLabel="label" optionValue="value" class="w-full" />
     </div>
 
     <div class="form-field">
@@ -151,3 +151,4 @@ export default {
   width: 100%;
 }
 </style>
+

@@ -38,7 +38,7 @@ export default {
         <div class="topbar-user">
           <span class="avatar">{{ initial }}</span>
           <span>{{ displayName }}</span>
-          <span class="role">{{ user?.ChucVu }}</span>
+          <span class="role">{{ user?.ChucVu === "QuanLy" ? "Quản lý" : "Thủ thư" }}</span>
         </div>
       </header>
       <main class="page-container">
@@ -61,10 +61,11 @@ export default {
 .topbar { background: #fff; padding: .75rem 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,.06); display: flex; align-items: center; justify-content: space-between; }
 .topbar-user { display: flex; align-items: center; gap: .5rem; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; background: #42b883; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
-.role { font-size: .8rem; color: #6b7280; }
+.role { font-size: .8rem; color: #ffffff; background: #42b883; padding: .15rem .6rem; border-radius: 999px; font-weight: 600;}
 .hamburger { background: none; border: none; font-size: 1.2rem; cursor: pointer; }
 @media (max-width: 768px) {
   .sidebar { position: fixed; left: -260px; z-index: 20; height: 100vh; }
   .admin-shell:not(.collapsed) .sidebar { left: 0; }
 }
 </style>
+
