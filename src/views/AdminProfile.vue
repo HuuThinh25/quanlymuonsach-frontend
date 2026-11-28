@@ -43,8 +43,10 @@ export default {
       if (!this.validateInfo()) return;
       this.infoLoading = true;
       try {
-        await api("/api").put("/auth/ho-so", { ...this.form });
-        this.toast.add({ severity: "success", summary: "OK", detail: "Đã lưu", life: 2000 });
+         await api("/api").put("/auth/ho-so", { ...this.form });
+         const u = authService.getUser();
+         if (u) { u.HoTenNV = this.form.HoTenNV; localStorage.setItem("user", JSON.stringify(u)); }
+         this.toast.add({ severity: "success", summary: "OK", detail: "Đã lưu", life: 2000 });
       } catch (e) {
         this.toast.add({ severity: "error", summary: "Lỗi", detail: e.response?.data?.message || "Lỗi", life: 3000 });
       } finally {

@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import authService from "@/services/auth.service";
 
 export default {
+  data() { return { user: authService.getUser() }; },
   setup() {
     const router = useRouter();
     function logout() {
@@ -11,11 +12,21 @@ export default {
     }
     return { logout, authService };
   },
+  async mounted() {
+    try {
+      const res = await (await import("@/services/api.service")).default("/api").get("/auth/me");
+      const d = res.data || {};
+      const u = this.user || {};
+      if (u.role === "docgia") { u.HoLot = d.HoLot || u.HoLot; u.Ten = d.Ten || u.Ten; }
+      else { u.HoTenNV = d.HoTenNV || u.HoTenNV; }
+      this.user = u;
+      localStorage.setItem("user", JSON.stringify(u));
+    } catch (e) {}
+  },
   computed: {
-    user() { return authService.getUser(); },
     loggedIn() { return authService.isLoggedIn(); },
     displayName() {
-      const u = authService.getUser();
+      const u = this.user;
       if (!u) return "";
       return u.role === "docgia" ? (u.HoLot + " " + u.Ten) : (u.HoTenNV || "");
     },

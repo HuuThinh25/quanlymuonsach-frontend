@@ -3,14 +3,23 @@ import { useRouter } from "vue-router";
 import authService from "@/services/auth.service";
 
 export default {
-  data() { return { collapsed: false }; },
+  data() { return { collapsed: false, user: authService.getUser() }; },
   setup() {
     const router = useRouter();
     function logout() { authService.logout(); router.push("/login"); }
     return { logout, authService };
   },
+  async mounted() {
+    try {
+      const res = await (await import("@/services/api.service")).default("/api").get("/auth/me");
+      const d = res.data || {};
+      const u = this.user || {};
+      u.HoTenNV = d.HoTenNV || u.HoTenNV;
+      this.user = u;
+      localStorage.setItem("user", JSON.stringify(u));
+    } catch (e) {}
+  },
   computed: {
-    user() { return authService.getUser(); },
     isQuanLy() { return this.user?.ChucVu === "QuanLy"; },
     displayName() { return this.user?.HoTenNV || ""; },
     initial() { return this.displayName ? this.displayName.charAt(0).toUpperCase() : "?"; },

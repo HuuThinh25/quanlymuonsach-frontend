@@ -67,8 +67,10 @@ export default {
           const d = this.form.NgaySinh;
           payload.NgaySinh = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
         }
-        await api("/api").put("/auth/ho-so", payload);
-        this.toast.add({ severity: "success", summary: "OK", detail: "Đã lưu", life: 2000 });
+         await api("/api").put("/auth/ho-so", payload);
+         const u = authService.getUser();
+         if (u) { u.HoLot = this.form.HoLot; u.Ten = this.form.Ten; localStorage.setItem("user", JSON.stringify(u)); }
+         this.toast.add({ severity: "success", summary: "OK", detail: "Đã lưu", life: 2000 });
       } catch (e) {
         this.toast.add({ severity: "error", summary: "Lỗi", detail: e.response?.data?.message || "Lỗi", life: 3000 });
       } finally {
